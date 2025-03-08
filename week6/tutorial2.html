@@ -537,29 +537,22 @@ document.write(`
 </section>
 <section id="extract-data-from-flickr">
 <h2>2. Extract data from Flickr<a class="headerlink" href="#extract-data-from-flickr" title="Permalink to this heading">#</a></h2>
-<hr><p>To extract data from Flicker, we will use their <strong>API</strong>. This is an acronym for application programming interface. It is a software intermediary that allows two applications to talk to each other. APIs are an accessible way to extract and share data within and across organizations. APIs are all around us. Every time you use a rideshare app, send a mobile payment, or change the thermostat temperature from your phone, you’re using an API.</p>
+<hr><p><strong>IMPORTANT: Unfortunately, Flickr has recently made changes to their <strong>API</strong> policies, which makes it now impossible to perform this analysis with a free user account. While I keep the description below in case you still want to try it or do it, we will load a pre-created dataset in the remainder of the assignment.</strong></p>
+<p>To extract data from Flicker, we will use their <strong>API</strong>. This is an acronym for application programming interface. It is a software intermediary that allows two applications to talk to each other. APIs are an accessible way to extract and share data within and across organizations. APIs are all around us. Every time you use a rideshare app, send a mobile payment, or change the thermostat temperature from your phone, you’re using an API.</p>
 <p>However, before we can access this <strong>API</strong>, we need to take a few steps. Most importantly, we need to register ourselves on the <a class="reference external" href="https://www.flickr.com/">Flickr</a> portal. To do so, we need to register, as explained in the video clip below:</p>
 <img src="https://github.com/ElcoK/BigData_AED/blob/main/_static/images/Flickr_registration.gif?raw=1" class="bg-primary mb-1">
 <br>
 <p>Now, the next step is to access the API. You can now login on the website of <a class="reference external" href="https://www.flickr.com/">Flickr</a>, and go to the <strong>API</strong> part of the <a class="reference external" href="https://www.flickr.com/services/apps/create/apply/?">website</a>.</p>
 <p>Now click on <code class="docutils literal notranslate"><span class="pre">APPLY</span> <span class="pre">FOR</span> <span class="pre">A</span> <span class="pre">NON-COMMERCIAL</span> <span class="pre">KEY</span></code> and just fill in some information about the course. The name of the App can be something random and related to our big data course, and you just need to fill in two lines of text to describe what you want to do. As soon as you click <code class="docutils literal notranslate"><span class="pre">SUBMIT</span></code>, you will see a generated <strong>api_key</strong> and an <strong>api_secret</strong>. Fill those in below.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">api_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-<span class="n">api_secret</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
-
-<span class="n">flickr</span> <span class="o">=</span> <span class="n">flickrapi</span><span class="o">.</span><span class="n">FlickrAPI</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">api_secret</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>api_key = ‘’
+api_secret=’’</p>
+<p>flickr = flickrapi.FlickrAPI(api_key, api_secret, cache=True)</p>
 <section id="prepare-data-extraction">
 <h3>Prepare data extraction<a class="headerlink" href="#prepare-data-extraction" title="Permalink to this heading">#</a></h3>
-<p>Before we get started with the extraction of data, we need to specify again an area of interest we want to focus on. In the cell below, you will now read “Ameland, The Netherlands”. Change this to any random or municipality in the Netherlands that (1) you can think of and (2) will work.</p>
-<p>In some cases, the function does not recognize the location. You could either try a different phrasing or try a different location. Many parts of the Netherlands should work. It is also fine to use an area outside of the Netherlands. I would make sure to not make it too large, as it will take a long time to extract the photos.</p>
+<p>Before we get started with the extraction of data, we need to specify again an area of interest we want to focus on. In the cell below, you will now read “Ameland, The Netherlands”. Given the <strong>API</strong> issues we just highlighted, we will use Ameland for the remainder of this exercise. As such, please do not change the place (unless you have gotten the Flickr registration to work).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">place_name</span> <span class="o">=</span> <span class="s2">&quot;Ameland, The Netherlands&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">place_name</span> <span class="o">=</span> <span class="s2">&quot;Ameland Island, The Netherlands&quot;</span>
 <span class="n">area</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">geocode_to_gdf</span><span class="p">(</span><span class="n">place_name</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -595,31 +588,21 @@ document.write(`
 </div>
 </div>
 <p>And now we can extract all the photos. We collect all of them in a list, through the <code class="docutils literal notranslate"><span class="pre">.append()</span></code> function</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">collect_pictures</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">photo</span> <span class="ow">in</span> <span class="n">flickr</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tag_mode</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">,</span>
-                         <span class="c1">#tags=&#39;nature&#39;,</span>
-                         <span class="n">bbox</span><span class="o">=</span><span class="n">bbox_string</span><span class="p">,</span><span class="n">extras</span><span class="o">=</span><span class="s1">&#39;geo,tags,date_taken,url_m&#39;</span><span class="p">):</span>
-    
-    <span class="n">get_attributes</span> <span class="o">=</span> <span class="n">photo</span><span class="o">.</span><span class="n">attrib</span>
-    <span class="n">collect_pictures</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
-                             <span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">],</span>
-                             <span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;datetaken&#39;</span><span class="p">],</span>
-                             <span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;tags&#39;</span><span class="p">],</span>
-                             <span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
-                             <span class="n">get_attributes</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]])</span>
+<p><strong>This code chunk is made text as we will use a pre-extracted dataset now</strong></p>
+<p>collect_pictures = []
+for photo in flickr.walk(tag_mode=’any’,
+#tags=’nature’,
+bbox=bbox_string,extras=’geo,tags,date_taken,url_m’):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>get_attributes = photo.attrib
+collect_pictures.append([get_attributes[&#39;id&#39;],
+                         get_attributes[&#39;owner&#39;],
+                         get_attributes[&#39;datetaken&#39;],
+                         get_attributes[&#39;tags&#39;],
+                         get_attributes[&#39;latitude&#39;],
+                         get_attributes[&#39;longitude&#39;]])
 </pre></div>
 </div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">collect_pictures</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>len(collect_pictures)</p>
 </section>
 </section>
 <section id="explore-the-data">
@@ -627,14 +610,14 @@ document.write(`
 <hr>
 Now we have extracted the data and, let's explore (and clean) this data a bit more. The convenient thing of having everything stored in a list, is that we can easily turn this into a pandas DataFrame.<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">collect_pictures</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;owner&#39;</span><span class="p">,</span><span class="s1">&#39;datetaken&#39;</span><span class="p">,</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;&quot;https://github.com/VU-IVM/BigData_AED/raw/main/week6/Ameland_Flickr.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;Ameland_Flickr.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">collect_pictures</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;owner&#39;</span><span class="p">,</span><span class="s1">&#39;datetaken&#39;</span><span class="p">,</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>

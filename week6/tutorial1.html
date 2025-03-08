@@ -464,6 +464,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lemmatization-and-stemming">3.6 Lemmatization and Stemming</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">3.7 Visualization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-social-media">3.8 Example using social media</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sentiment-analysis">3.9 Sentiment Analysis</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-retrieval-and-post-processing">4. Data retrieval and post-processing</a></li>
@@ -522,6 +523,7 @@ document.write(`
 <p><a class="reference external" href="https://www.nltk.org/"><strong>NLTK</strong></a> is a platform for building Python programs to work with human language data.</p>
 <p><a class="reference external" href="https://numpy.org/doc/stable/"><strong>NumPy</strong></a> is a Python library that provides a multidimensional array object, various derived objects, and an assortment of routines for fast operations on arrays.</p>
 <p><a class="reference external" href="https://pandas.pydata.org/docs/"><strong>Pandas</strong></a> is an open source, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.</p>
+<p><a class="reference external" href="https://www.tweepy.org/"><strong>tweepy</strong></a> is an easy-to-use Python library for accessing the Twitter API.</p>
 <p><a class="reference external" href="https://pypi.org/project/wordcloud/"><strong>wordcloud</strong></a> is a little word cloud generator in Python.</p>
 <p>Now we will import these packages in the cell below:</p>
 <div class="cell docutils container">
@@ -532,18 +534,26 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tweepy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.axes_grid1</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_axes_locatable</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">wordcloud</span><span class="w"> </span><span class="kn">import</span> <span class="n">WordCloud</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">wordcloud</span><span class="w"> </span><span class="kn">import</span> <span class="n">WordCloud</span><span class="p">,</span> <span class="n">ImageColorGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">nltk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">stopwords</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.tokenize</span><span class="w"> </span><span class="kn">import</span> <span class="n">word_tokenize</span><span class="p">,</span> <span class="n">RegexpTokenizer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.stem</span><span class="w"> </span><span class="kn">import</span> <span class="n">WordNetLemmatizer</span><span class="p">,</span> <span class="n">PorterStemmer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">nltk</span><span class="w"> </span><span class="kn">import</span> <span class="n">pos_tag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">wordnet</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">nltk.sentiment.vader</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
@@ -556,10 +566,10 @@ document.write(`
 <hr><p>Social media are interactive technologies that facilitate the creation and sharing of information, ideas, interests, and other forms of expression through virtual communities and networks.</p>
 <p>Therefore, social media can be used as a source of real-time information for natural disaster detection. Moreover, the database can be used to post-analyze natural disasters for a better estimation of the extent and the damages the hazard had caused.</p>
 <p>Some of the most popular social media websites, with more than 100 million registered users, include Facebook (and its associated Facebook Messenger), TikTok, WeChat, ShareChat, Instagram, QZone, Weibo, Twitter, Tumblr, Baidu Tieba, and LinkedIn.</p>
-<p>Twitter has been proven to be a useful data source for many research communities (Ekta et al, 2017, Graff et al, 2022), from social science to computer science, it can advance research objectives on topics as diverse as the global conversations happening on Twitter. It is one of the most popular online social networking sites with around 450 million monthly <a class="reference external" href="https://www.demandsage.com/twitter-statistics/">active users</a> as of 2022. An important characteristic of Twitter is its real-time nature.</p>
-<p>Twitter offers tools and programs that help people when emergencies and natural disasters strike, allowing channels of communication and humanitarian response, among other <a class="reference external" href="https://about.twitter.com/en/who-we-are/twitter-for-good">areas of focus</a> such as environmental conservation and sustainability.</p>
-<p>The <a class="reference external" href="https://developer.twitter.com/en">Twitter API</a> enables programmatic access to Twitter in unique and advanced ways. Twitter’s Developer Platform enables you to harness the power of Twitter’s open, global, real-time, and historical platform within your own applications. The platform provides tools, resources, data, and API products for you to integrate, and expand Twitter’s impact through research, solutions, and more.</p>
-<p>Unfortunately, Twitter has made their API policy very strict since February 12. As such, we cannot use their API within this tutorial. As such, we will use data that was previously retrieved by us (in the preparation of this tutorial).</p>
+<p>X/Twitter has been proven to be a useful data source for many research communities (Ekta et al, 2017, Graff et al, 2022), from social science to computer science, it can advance research objectives on topics as diverse as the global conversations happening on X/witter. An important characteristic of X/Twitter is its real-time nature. Unfortunately, it seems to have gone into decline over the past two years.</p>
+<p>In the peak days, X/Twitter offered tools and programs that help people when emergencies and natural disasters strike, allowing channels of communication and humanitarian response, among other areas of focus, such as environmental conservation and sustainability.</p>
+<p>The <a class="reference external" href="https://developer.twitter.com/en">Twitter API</a> enabled programmatic access to X/Twitter in unique and advanced ways. X/Twitter’s Developer Platform enables you to harness the power of Twitter’s open, global, real-time, and historical platform within your own applications. The platform provides tools, resources, data, and API products for you to integrate, and expand Twitter’s impact through research, solutions, and more.</p>
+<p>Unfortunately, X/Twitter has made their API policy very strict since February 12, 2023. As such, we cannot use their API within this tutorial. As such, we will use data that was previously retrieved by us (in the preparation of this tutorial).</p>
 <p>Download the ‘Week6_Data’ folder provided in Canvas and save it to your previously created BigData folder on your Google Drive.</p>
 <section id="connect-to-google-drive">
 <h3>Connect to google drive<a class="headerlink" href="#connect-to-google-drive" title="Permalink to this heading">#</a></h3>
@@ -668,9 +678,9 @@ When was the last time @VU_IVM tweeted/retweeted?
 </section>
 <section id="natural-language-processing-nlp">
 <h2>3. Natural Language Processing (NLP)<a class="headerlink" href="#natural-language-processing-nlp" title="Permalink to this heading">#</a></h2>
-<hr><p>As mentioned in <a class="reference external" href="https://elcok.github.io/BigData_AED/week6/lecture.html">Lecture</a>, Natural language processing (NLP) is an area of computer science and artificial intelligence concerned with the interaction between computers and humans in natural language. The ultimate goal of NLP is to help computers understand language as well as we do.
+<hr><p>As mentioned in <a class="reference external" href="https://vu-ivm.github.io/BigData_AED/week6/lecture.html">Lecture</a>, Natural language processing (NLP) is an area of computer science and artificial intelligence concerned with the interaction between computers and humans in natural language. The ultimate goal of NLP is to help computers understand language as well as we do.
 There are two ways of understanding natural language: Syntactic and Semantic analysis. Whereas Syntactic analysis (also referred to as syntax analysis or parsing) is the process of analyzing natural language with the rules of formal grammar, Semantic analysis is the process of understanding the meaning and interpretation of words, signs, and sentence structure.</p>
-<p>There are different techniques for understanding text such as Parsing, Stemming, Text Segmentation, Named Entity Recognition, Relationship Extraction, and Sentiment Analysis (see <a class="reference external" href="https://elcok.github.io/BigData_AED/week6/lecture.html">Lecture</a>).</p>
+<p>There are different techniques for understanding text such as Parsing, Stemming, Text Segmentation, Named Entity Recognition, Relationship Extraction, and Sentiment Analysis (see <a class="reference external" href="https://vu-ivm.github.io/BigData_AED/week6/lecture.html">Lecture</a>).</p>
 <p>In this section, we’ll utilize the NLTK package to tokenize and normalize our corpus. Tokenization involves breaking down text into individual words or tokens, while normalization ensures uniformity by standardizing text formats.</p>
 <section id="downloading-punctuation-and-wordnet-corpus">
 <h3>3.1 Downloading Punctuation and Wordnet Corpus<a class="headerlink" href="#downloading-punctuation-and-wordnet-corpus" title="Permalink to this heading">#</a></h3>
@@ -690,7 +700,7 @@ There are two ways of understanding natural language: Syntactic and Semantic ana
 <p><strong>Corpus</strong> (literally Latin for body) refers to a collection of texts. Such collections may be formed of a single language of texts, or can span multiple languages.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">example_sent</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;This is a sample sentence, showing off the stop words filtration. We will also show a sample word cloud&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">example_sent</span> <span class="o">=</span> <span class="s2">&quot;There is nothing either good or bad but thinking makes it so beter. This is just a sample sentence, showing off the stop words filtration. We will also show a sample word cloud&quot;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">example_sent</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -777,6 +787,66 @@ There are two ways of understanding natural language: Syntactic and Semantic ana
 </div>
 </div>
 </div>
+<p><em>Notice:</em> Did all words lemmatize correctly? As mentioned, the word “better” should have resulted in “well” or “good,” but this did not occur.</p>
+<p>This happens because lemmatization requires accurate part-of-speech (POS) tagging to produce correct dictionary base forms. POS tagging assigns each word a tag representing its syntactic role in the sentence.</p>
+<p><strong>Improved Lemmatization with POS Tagging:</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Function to map POS tags to WordNet format</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_wordnet_pos</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wordnet</span><span class="o">.</span><span class="n">ADJ</span>
+    <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wordnet</span><span class="o">.</span><span class="n">VERB</span>
+    <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wordnet</span><span class="o">.</span><span class="n">NOUN</span>
+    <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wordnet</span><span class="o">.</span><span class="n">ADV</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wordnet</span><span class="o">.</span><span class="n">NOUN</span>
+
+<span class="c1"># Function to lemmatize with POS tagging</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lemmatize_passage</span><span class="p">(</span><span class="n">words_sentence</span><span class="p">):</span>
+
+    <span class="n">lemmatizer</span> <span class="o">=</span> <span class="n">WordNetLemmatizer</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">words_sentence</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+      <span class="n">pos_tags</span> <span class="o">=</span> <span class="n">pos_tag</span><span class="p">(</span><span class="n">words_sentence</span><span class="p">)</span>
+      <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">get_wordnet_pos</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span> <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">pos_tags</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">pos_tags</span> <span class="o">=</span> <span class="n">pos_tag</span><span class="p">([</span><span class="n">words_sentence</span><span class="p">])</span>
+      <span class="n">word</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="n">pos_tags</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos_tags</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">lemmatized_words</span> <span class="o">=</span> <span class="n">lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">get_wordnet_pos</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">lemmatized_words</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lemmatized</span> <span class="o">=</span> <span class="n">lemmatize_passage</span><span class="p">(</span><span class="n">XXXX</span><span class="p">)</span> <span class="c1"># Change the XXXX for the sentence you want to lemmatize</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lemmatized sentence: </span><span class="si">{</span><span class="n">lemmatized</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lemmatized</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The result may vary based on the POS tag. Some examples:</p>
+<ul class="simple">
+<li><p><strong>n</strong>: Noun (e.g., ‘car’ → ‘car’)</p></li>
+<li><p><strong>v</strong>: Verb (e.g., ‘running’ → ‘run’)</p></li>
+<li><p><strong>a</strong>: Adjective (e.g., ‘better’ → ‘good’)</p></li>
+<li><p><strong>r</strong>: Adverb (e.g., ‘quickly’ → ‘quick’)</p></li>
+<li><p>Default: Noun if no POS is specified.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;better :&quot;</span><span class="p">,</span> <span class="n">wnl</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="s2">&quot;better&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;better :&quot;</span><span class="p">,</span> <span class="n">wnl</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="s2">&quot;better&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p><strong>Stemming</strong> is the process of eliminating affixes (suffixed, prefixes, infixes, circumfixes) from a word in order to obtain a word stem.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -801,14 +871,14 @@ There are two ways of understanding natural language: Syntactic and Semantic ana
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:20}{1:20}{2:20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Word&quot;</span><span class="p">,</span> <span class="s2">&quot;Lemmatized&quot;</span><span class="p">,</span> <span class="s2">&quot;Stemmed&quot;</span><span class="p">))</span>
 
-<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">filtered_sentence</span><span class="p">:</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:20}{1:20}{2:20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">wnl</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">),</span> <span class="n">ps</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">),))</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">XXXX</span><span class="p">:</span> <span class="c1"># XXXX: explore the differeces between our lists filtered_sentence or normalized_sentence</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:20}{1:20}{2:20}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">lemmatize_passage</span><span class="p">(</span><span class="n">word</span><span class="p">),</span> <span class="n">ps</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">),))</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 2:</b> explain the differences between the three datasets: the original word data, the lemmatized data, and the stemmed data. Additionally, in what scenarios would you choose to use each type of data? (Feel free to explore the differences by using a different sentence.)
+<b>Question 2:</b> Explain the differences between the three datasets: the original word data, the lemmatized data, and the stemmed data. Additionally, in what scenarios would you choose to use each type of data? (Feel free to explore the differences by using a different sentence.)
 </div></section>
 <section id="visualization">
 <h3>3.7 Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading">#</a></h3>
@@ -983,7 +1053,46 @@ Here’s an example:</p>
 </div>
 </div>
 </div>
-<p>Let’s start visualizing the data using a bar plot</p>
+<p>Explore the unique words from the previous line. Are they all valid words?</p>
+<p>Some characters and non-words were not filtered out. To address this, we will clean the data by retaining only words that appear in a standard English word list.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load english words</span>
+<span class="n">english_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">words</span><span class="o">.</span><span class="n">words</span><span class="p">())</span>
+
+<span class="c1"># Define the cleaning function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_sentence</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+  <span class="n">cleaned</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">english_words</span><span class="p">:</span>
+          <span class="n">cleaned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span> <span class="k">pass</span>
+
+  <span class="k">return</span> <span class="n">cleaned</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cleaned_sentence</span> <span class="o">=</span> <span class="n">clean_sentence</span><span class="p">(</span><span class="n">reduced</span><span class="p">)</span> <span class="c1">#</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Lenght without cleaning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reduced</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Lenght with cleaning: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cleaned_sentence</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now let’s start visualizing the data using a bar plot</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unique</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cleaned_sentence</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">unique_counts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">unique</span><span class="p">,</span> <span class="n">count</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)),</span> <span class="nb">print</span><span class="p">(</span><span class="n">unique_counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make sure to change the XXX in order to have a nice plot</span>
@@ -1027,11 +1136,11 @@ Here’s an example:</p>
 </div>
 </div>
 </div>
-<p>With our refined plot, we can observe that certain words, such as ‘https’ or ‘co’, have not been filtered out by the stopwords. To address this, we can create a custom filter to exclude these specific words from our analysis.</p>
+<p>With our refined plot, we can observe that certain words, or letters such as ‘u’, have not been filtered out. To address this, we can create a custom filter to exclude these specific words from our analysis.</p>
 <p>Feel free to enhance the filter by adding any other words that you believe should be excluded from our analysis!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">word_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;co&#39;</span><span class="p">,</span> <span class="s1">&#39;http&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">word_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
 
 <span class="n">filtered_words</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">filtered_count</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1118,6 +1227,92 @@ Here’s an example:</p>
 </div>
 <div class="alert alert-block alert-success">
 <b>Question 5:</b> Which is the word that @BarackObama used the most? What is the context/tone of his words?
+</div></section>
+<section id="sentiment-analysis">
+<h3>3.9 Sentiment Analysis<a class="headerlink" href="#sentiment-analysis" title="Permalink to this heading">#</a></h3>
+<p><strong>Sentiment analysis</strong> is the process of using natural language processing (NLP) to determine the emotional tone behind a body of text. It classifies text as positive, negative, or neutral, helping to analyze opinions, attitudes, and emotions from sources like reviews, social media, or customer feedback.</p>
+<p>We will briefly explore functions for performing sentiment analysis.</p>
+<p>To demonstrate this, we will use an Amazon dataset containing customer reviews. You can find more details <a class="reference external" href="https://www.datacamp.com/tutorial/text-analytics-beginners-nltk">here</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the amazon review dataset</span>
+<span class="n">amazon_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;amazon.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">amazon_file</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Before conducting the sentiment analysis, we must preprocess the data by tokenizing, removing stop words, and applying stemming or lemmatization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create preprocess_text function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># Tokenize the text</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="c1"># Remove stop words</span>
+    <span class="n">filtered_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">)]</span>
+
+    <span class="c1"># stemming or lemmatization ###</span>
+    <span class="n">lemmatizer</span> <span class="o">=</span> <span class="n">WordNetLemmatizer</span><span class="p">()</span>
+    <span class="n">lemmatized_tokens</span> <span class="o">=</span> <span class="n">lemmatize_passage</span><span class="p">(</span><span class="n">filtered_tokens</span><span class="p">)</span>
+
+    <span class="n">lemmatized_or_stemmed</span> <span class="o">=</span> <span class="c1"># use the example code from section 3.6</span>
+
+    <span class="c1"># Join the tokens back into a string</span>
+    <span class="n">processed_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmatized_or_stemmed</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">processed_text</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># apply the function</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;reviewText&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;reviewText&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">preprocess_text</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>After preprocessing the data, we can proceed with the sentiment analysis.</p>
+<p>We’ll define a function that uses the analyzer’s <code class="docutils literal notranslate"><span class="pre">polarity_scores</span></code> method to generate sentiment scores (positive, negative).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># initialize NLTK sentiment analyzer</span>
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+
+<span class="c1"># create get_sentiment function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sentiment</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">sentiment</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">sentiment</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># apply get_sentiment function</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;reviewText&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">get_sentiment</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The function returns 1 if the positive score is greater than 0, otherwise 0, classifying reviews as positive or negative.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_positive</span> <span class="o">=</span>
+<span class="n">total_negative</span> <span class="o">=</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="alert alert-block alert-success">
+<b>Question 6:</b> What's the percentage of positive reviews?
 </div></section>
 </section>
 <section id="data-retrieval-and-post-processing">
@@ -1269,13 +1464,11 @@ That will allow us to analyze what is happening at a specific time and/or locati
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 6:</b> How many tweets contain the coordinates?
+<b>Question 7:</b> How many tweets contain the coordinates?
 Mention at least one advantage and one disadvantage of not sharing the coordinates.
-</div><div class="alert alert-block alert-success">
-<b>Question 7:</b> Provide an explanation of how the for loop and the count function operate.
 </div><p>Unfortunately not all (or none) of the users share the real location nor allow the geolocation for the coordinates.</p>
 <p>Therefore, when we want to analyze a certain region we can’t use all the tweets and we need to further filter the information.</p>
-<p>Open the previously retrieved dataset, it contains only the tweets with coordinates::</p>
+<p>Open the previously retrieved dataset, it contains only the tweets with coordinates:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">db_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;Earthquakes_wc_db.csv&#39;</span><span class="p">)</span>
@@ -1466,8 +1659,8 @@ The database contains tweets about floods located in Texas from 30/07/2014 to 15
 <div class="alert alert-block alert-success">
 <b>Question 10:</b> When does the high peak usually happen each year? What could be a potential explanation for the pattern?
 </div><div class="alert alert-block alert-success">
-<b>Question 11:</b> When does the bigger peak occur? What was the cause of it?
-</div><p>In Natural Language Process (NLP), semantic analysis is the process of understanding the meaning and interpretation of words.</p>
+<b>Question 11:</b> When does the biggest peak occur? What was the cause of it?
+</div><p>As explained before, in  Natural Language Process (NLP), semantic analysis is the process of understanding the meaning and interpretation of words.</p>
 <p>This time we can use keywords to filter the tweets, identifying negative or positive meanings.</p>
 <p>We’re starting with negative words such as ‘cry’ and ‘warning’:</p>
 <div class="cell docutils container">
@@ -1502,8 +1695,44 @@ The database contains tweets about floods located in Texas from 30/07/2014 to 15
 </div>
 </div>
 </div>
+<p>Let’s use the functions from section 3.9 to perform sentiment analysis on the full dataset.</p>
+<p>First, we’ll create a DataFrame with the data, then preprocess it using the <code class="docutils literal notranslate"><span class="pre">preprocess_text</span></code> function, and finally apply <code class="docutils literal notranslate"><span class="pre">get_sentiment</span></code> to analyze the sentiment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tweets</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This dataset is very large, so we’ll select a random sample to reduce computational time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_sample</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># apply preprocess_text function</span>
+<span class="n">df_sample</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sample</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span>
+<span class="n">df_sample</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># apply get_sentiment function</span>
+<span class="n">df_sample</span><span class="p">[</span><span class="s1">&#39;sentiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sample</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span>
+<span class="n">df_sample</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="alert alert-block alert-success">
-<b>Question 12:</b> Can you think about other negative keywords? Can you think of other positive keywords?
+<b>Question 12:</b> What is the overall sentiment of your sample? Please explain.
 </div></section>
 </section>
 </section>
@@ -1590,6 +1819,7 @@ The database contains tweets about floods located in Texas from 30/07/2014 to 15
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lemmatization-and-stemming">3.6 Lemmatization and Stemming</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">3.7 Visualization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-using-social-media">3.8 Example using social media</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sentiment-analysis">3.9 Sentiment Analysis</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-retrieval-and-post-processing">4. Data retrieval and post-processing</a></li>
