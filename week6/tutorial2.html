@@ -610,14 +610,8 @@ collect_pictures.append([get_attributes[&#39;id&#39;],
 <hr>
 Now we have extracted the data and, let's explore (and clean) this data a bit more. The convenient thing of having everything stored in a list, is that we can easily turn this into a pandas DataFrame.<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;&quot;https://github.com/VU-IVM/BigData_AED/raw/main/week6/Ameland_Flickr.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">collect_pictures</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;owner&#39;</span><span class="p">,</span><span class="s1">&#39;datetaken&#39;</span><span class="p">,</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://github.com/VU-IVM/BigData_AED/raw/main/week6/Ameland_Flickr.csv&#39;</span><span class="p">)</span>
+<span class="c1">#df = pd.DataFrame(collect_pictures,columns=[&#39;id&#39;,&#39;owner&#39;,&#39;datetaken&#39;,&#39;tags&#39;,&#39;latitude&#39;,&#39;longitude&#39;])</span>
 </pre></div>
 </div>
 </div>
