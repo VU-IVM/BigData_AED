@@ -551,7 +551,7 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk</span><span class="w"> </span><span class="kn">import</span> <span class="n">pos_tag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">wordnet</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">words</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.sentiment.vader</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentimentIntensityAnalyzer</span>
 <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 
@@ -1254,12 +1254,12 @@ Here’s an example:</p>
     <span class="c1"># Remove stop words</span>
     <span class="n">filtered_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">)]</span>
 
-    <span class="c1"># stemming or lemmatization ###</span>
-    <span class="n">lemmatizer</span> <span class="o">=</span> <span class="n">WordNetLemmatizer</span><span class="p">()</span>
-    <span class="n">lemmatized_tokens</span> <span class="o">=</span> <span class="n">lemmatize_passage</span><span class="p">(</span><span class="n">filtered_tokens</span><span class="p">)</span>
-
-    <span class="n">lemmatized_or_stemmed</span> <span class="o">=</span> <span class="c1"># use the example code from section 3.6</span>
-
+      <span class="c1"># Choose between stemming or lemmatization </span>
+    <span class="n">lemmatizer</span> <span class="o">=</span> <span class="n">XXXX</span> <span class="n">OR</span> <span class="n">stemmer</span> <span class="o">=</span> <span class="c1">####          # Initialize lemmatizer OR stemmer</span>
+    <span class="n">lemmatized_tokens</span> <span class="o">=</span> <span class="n">XXXX</span> <span class="n">OR</span> <span class="n">stemmed_tokens</span> <span class="o">=</span> <span class="c1">####      # Lemmatize OR stem tokens</span>
+ 
+    <span class="n">lemmatized_or_stemmed</span> <span class="o">=</span> <span class="c1"># either fill in lemmatized_tokens or stemmed_tokens</span>
+    
     <span class="c1"># Join the tokens back into a string</span>
     <span class="n">processed_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmatized_or_stemmed</span><span class="p">)</span>
 
@@ -1515,7 +1515,7 @@ Mention at least one advantage and one disadvantage of not sharing the coordinat
 <p>Now let’s see what our data looks like:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">world</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;naturalearth_lowres&#39;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">world</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">&quot;https://github.com/nvkelso/natural-earth-vector/raw/master/10m_cultural/ne_10m_admin_0_countries.shp&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;16&#39;</span>
 
 <span class="c1"># Make sure to change the XXX in order to have a nice plot</span>
