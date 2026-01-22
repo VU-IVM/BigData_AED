@@ -1014,6 +1014,18 @@ Make sure that you save this file before you continue, else you will lose everyt
 </div>
 </div>
 </div>
+<p><strong>What is the difference?</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code> checks if two values are equal (do they have the same content?)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code> checks if two objects are the same object in memory (are they stored in the exact same location?)</p></li>
+</ul>
+<p>An analogy: Imagine two people each holding a €10 note.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code>: *Do both notes have the same value?*→ Yes, both are €10</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code>: <em>Are they holding the exact same physical note?</em> → No, they are two different pieces of paper</p></li>
+</ul>
+<p><strong>Why does 2 is 2 return True but still warn you?</strong></p>
+<p>Python happens to reuse the same memory location for small integers (-5 to 256) as an optimization. So 2 is 2 works by accident, not by design. But this is <strong>not</strong> guaranteed behavior; it is an implementation detail that could change or behave differently for larger numbers.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">==</span> <span class="mf">2.0</span>

@@ -1200,10 +1200,10 @@ The Pandas team recommends <strong>Method 2 (re-assign)</strong>, for a <a class
 </div>
 </div>
 </div>
-<p>For these, we need <code class="docutils literal notranslate"><span class="pre">.applymap()</span></code>:</p>
+<p>For these, we need <code class="docutils literal notranslate"><span class="pre">.map()</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Time&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Time&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1211,9 +1211,9 @@ The Pandas team recommends <strong>Method 2 (re-assign)</strong>, for a <a class
 <p>However, there are often “vectorized” versions of common functions like this already available, which are much faster. In the case above, we can use <code class="docutils literal notranslate"><span class="pre">.astype()</span></code> to change the dtype of a whole column quickly:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time_applymap</span> <span class="o">=</span> <span class="o">%</span><span class="k">timeit</span>  -q -o -r 3 df[[&#39;Time&#39;]].applymap(float)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time_map</span> <span class="o">=</span> <span class="o">%</span><span class="k">timeit</span>  -q -o -r 3 df[[&#39;Time&#39;]].map(float)
 <span class="n">time_builtin</span> <span class="o">=</span> <span class="o">%</span><span class="k">timeit</span>  -q -o -r 3 df[[&#39;Time&#39;]].astype(float)
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;astype&#39; is </span><span class="si">{</span><span class="n">time_applymap</span><span class="o">.</span><span class="n">average</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">time_builtin</span><span class="o">.</span><span class="n">average</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> faster than &#39;applymap&#39;!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;astype&#39; is </span><span class="si">{</span><span class="n">time_map</span><span class="o">.</span><span class="n">average</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">time_builtin</span><span class="o">.</span><span class="n">average</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> faster than &#39;map&#39;!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1357,14 +1357,14 @@ The Pandas team recommends <strong>Method 2 (re-assign)</strong>, for a <a class
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;bfill&#39;</span><span class="p">)</span>  <span class="c1"># backward (upwards) fill from non-nan values</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">bfill</span><span class="p">()</span>  <span class="c1"># backward (upwards) fill from non-nan values</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>  <span class="c1"># forward (downward) fill from non-nan values</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>  <span class="c1"># forward (downward) fill from non-nan values</span>
 </pre></div>
 </div>
 </div>
