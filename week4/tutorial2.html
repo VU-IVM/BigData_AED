@@ -519,7 +519,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>osmnx
 <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>rioxarray
-<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;cdsapi&gt;=0.7.2&#39;</span>
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>cdsapi
 </pre></div>
 </div>
 </div>
@@ -542,6 +542,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zipfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZipFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
@@ -564,7 +565,7 @@ document.write(`
 <hr>
 <p>The windstorm data will be downloaded from the <a class="reference external" href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a>. As we have seen during the lecture, and as you can also see by browsing on this website, there is an awful lot of climate data available through this Data Store. As such, it is very valuable to understand how to access and download this information to use within an analysis. To keep things simple, we only download one dataset today: <a class="reference external" href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/sis-european-wind-storm-indicators?tab=overview">A winter windstorm</a>.</p>
 <p>We will do so using an <strong>API</strong>, which is the acronym for application programming interface. It is a software intermediary that allows two applications to talk to each other. APIs are an accessible way to extract and share data within and across organizations. APIs are all around us. Every time you use a rideshare app, send a mobile payment, or change the thermostat temperature from your phone, you’re using an API.</p>
-<p>However, before we can access this <strong>API</strong>, we need to take a few steps which can be found on the <a class="reference external" href="https://cds-beta.climate.copernicus.eu/how-to-api/">CDSAPI setup webpage of the Copernicus Climate Data Store</a>. The first step is to register yourself on the <a class="reference external" href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a> portal.</p>
+<p>However, before we can access this <strong>API</strong>, we need to take a few steps which can be found on the <a class="reference external" href="https://cds.climate.copernicus.eu/how-to-api">CDSAPI setup webpage of the Copernicus Climate Data Store</a>. The first step is to register yourself on the <a class="reference external" href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a> portal.</p>
 <p>Now, the next step is to request access to the dataset. As you can see in the cell below, we download a specific windstorm that has occured on the 28th of October in 2013. This is storm <a class="reference external" href="https://en.wikipedia.org/wiki/St._Jude_storm">Carmen (also called St Jude)</a>. To download the relevant windstorm data, fill out the associated <a class="reference external" href="https://cds.climate.copernicus.eu/datasets/sis-european-wind-storm-indicators?tab=download">dataset form</a> and make sure to <strong>agree to the Terms of Use</strong>.</p>
 <p>The last step is to access the API. You can now login on the website of the <a class="reference external" href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a>. After you login, you can click on your name in the top right corner of the webpage (next to the login button). On the personal page that has just opened, you will find your personal access token <strong>API</strong>. You need to add this in the cell below to be able to download the windstorm.</p>
 <div class="cell docutils container">
@@ -838,6 +839,15 @@ document.write(`
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://clc.gios.gov.pl/images/clc_ryciny/clc_classes.png&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><img src="https://clc.gios.gov.pl/images/clc_ryciny/clc_classes.png" width="800"/></div></div>
 </div>
 <div class="alert alert-block alert-success">
 <b>Question 4:</b> Describe the different land-use classes within your region that you see on the Corine Land Cover map.
@@ -1217,7 +1227,7 @@ document.write(`
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 8:</b> Upload a figure of the cleaned road network (e.g. in which you do not see any of the listed road types anymore)
+<b>Question 8:</b> Upload a figure of the cleaned road network (e.g. in which you do not see any of the listed road types anymore). Also make sure it contains all map elements. 
 </div><p>Nice! now let’s start with the damage calculation. As you already have may have noticed, our data is now not stored in raster format, but in vector format. One way to deal with this issue is to convert our vector data to raster data, but we will lose a lot of information and detail. As such, we will perform the damage assessment on the road elements, using the xarray flood map.</p>
 <p>Let’s start with preparing the flood data into vector format:</p>
 <div class="cell docutils container">

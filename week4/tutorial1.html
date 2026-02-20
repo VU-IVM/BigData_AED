@@ -617,6 +617,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">landuse</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">landuse</span><span class="o">.</span><span class="n">natural</span><span class="o">==</span><span class="s1">&#39;water&#39;</span><span class="p">,</span><span class="s1">&#39;landuse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;water&#39;</span>
 <span class="n">landuse</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">landuse</span><span class="o">.</span><span class="n">natural</span><span class="o">==</span><span class="s1">&#39;wetland&#39;</span><span class="p">,</span><span class="s1">&#39;landuse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;wetlands&#39;</span>
+<span class="n">landuse</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
 </pre></div>
 </div>
 </div>
@@ -719,7 +720,7 @@ document.write(`
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 3:</b> Please upload a figure of your land-use map, using OpenStreetMap. Also, state which landuse class is the most dominant?
+<b>Question 3:</b> Please upload a figure of your land-use map, using OpenStreetMap. Ensure that you have a clear title, and also make sure the figure size is correct (i.e. avoid weird stretching). What are the top three landuse classes that are most dominant?
 </div></section>
 <section id="rasterize-land-use-information">
 <h2>3. Rasterize land-use information<a class="headerlink" href="#rasterize-land-use-information" title="Permalink to this heading">#</a></h2>
@@ -954,7 +955,7 @@ document.write(`
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 5:</b>  Let's have a look at the extracted building information. Please describe in your own words the information it contains. Is there specific information that suprises you to see, and do you think anything is missing that you expected?
+<b>Question 5:</b>  Let's have a look at the extracted building information. Please describe in your own words the information it contains. Is there specific information that you expected, but not in the data?
 </div></section>
 <section id="analyze-and-visualize-building-stock">
 <h2>5. Analyze and visualize building stock<a class="headerlink" href="#analyze-and-visualize-building-stock" title="Permalink to this heading">#</a></h2>
@@ -1211,7 +1212,7 @@ document.write(`
 </div>
 </div>
 <div class="alert alert-block alert-success">
-<b>Question 9:</b>  Please add one more routes on a map and upload the resulting figure here. To do so, we suggest you to copy-paste the three lines that we have provided directly under Question 8 (the creation of an origin node, destination node and the route). For example, the area['bbox_west'] and the area['bbox_north'] are combined to provide a starting point for the route. We want you to pick a different coordinate within the geographical space of this network to start your route. And do the same for the destination node. You can then redefine a new route, and use the `plot_route_folum()` code to plot that route again.
+<b>Question 9:</b>  Please make a map with one other route on a map and upload the resulting figure here. To do so, we suggest you to copy-paste the three lines that we have provided directly under Question 8 (the creation of an origin node, destination node and the route). For example, the area['bbox_west'] and the area['bbox_north'] are combined to provide a starting point for the route. We want you to pick a different coordinate within the geographical space of this network to start your route. And do the same for the destination node. You can then redefine a new route, and use the `plot_route_folum()` code to plot that route again.
 </div></section>
 </section>
 
